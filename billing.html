@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Bill</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container h1 {
+            color: #222222;
+            font-size: 24px;
+        }
+        .container .address {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+            margin: 5px 0;
+            text-align: right;
+            width: 100%;
+        }
+        .container .date, .container .telephone {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+            margin: 5px 0;
+            text-align: right;
+            width: 100%;
+        }
+        .container p {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin: 5px 0;
+            text-align: left;
+            width: 100%;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .invoice-table th, .invoice-table td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+            font-size: 14px;
+        }
+        .invoice-table th {
+            background-color: #26c2c8;
+        }
+        .billbutton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #2498d1;
+            color: white;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .billbutton:hover {
+            background-color: #2621ba;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ROBIN SUPERMARKET</h1>
+        <p class="address">Trichy Road, Dindigul 624612</p>
+        <p class="date" id="currentDate"></p>
+        <p class="telephone">Tel: +91-1234567890</p>
+        <p id="invoiceNumber"></p>
+        <p id="customerName"></p>
+        <p id="customerAddress"></p>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Price Per Item</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="itemsTableBody">
+                
+            </tbody>
+        </table>
+        <p id="itemsTotal"></p>
+        <p id="taxAmount"></p>
+        <p id="totalAmount"></p>
+        <button class="billbutton" onclick="window.print()">Print</button>
+    </div>
+
+    <script>
+        const invoiceNumber = localStorage.getItem("invoiceNumber");
+        const customerName = localStorage.getItem("customerName");
+        const customerAddress = localStorage.getItem("customerAddress");
+        const items = JSON.parse(localStorage.getItem("items"));
+        const taxAmount = localStorage.getItem("taxAmount");
+        const itemsTotal = localStorage.getItem("itemsTotal");
+        const totalAmount = localStorage.getItem("totalAmount");
+
+        document.getElementById("invoiceNumber").textContent = `Invoice Number: ${invoiceNumber}`;
+        document.getElementById("customerName").textContent = `Customer Name: ${customerName}`;
+        document.getElementById("customerAddress").textContent = `Address: ${customerAddress}`;
+
+        const itemsTableBody = document.getElementById("itemsTableBody");
+        items.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.quantity}</td>
+                <td>₹${item.price}</td>
+                <td>₹${item.total}</td>
+            `;
+            itemsTableBody.appendChild(row);
+        });
+
+        document.getElementById("itemsTotal").textContent = `Items Total: ₹${itemsTotal}`;
+        document.getElementById("taxAmount").textContent = `Tax Amount: ₹${taxAmount}`;
+        document.getElementById("totalAmount").textContent = `Total Amount: ₹${totalAmount}`;
+        const currentDate = new Date().toLocaleDateString();
+        document.getElementById("currentDate").textContent = `Date: ${currentDate}`;
+    </script>
+</body>
+</html>

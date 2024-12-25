@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Billing System</title>
+    <style>
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #16b8dd;
+            border-radius: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input {
+            margin-bottom: 8px;
+        }
+        label {
+            width: 100px;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .item-container {
+            margin-bottom: 20px;
+        }
+        .total-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .total-container h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .total-container p {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        h1 {
+            text-align: center;
+        }
+        button {
+            padding: 10px;
+            
+        }
+        .add-item-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            color: rgb(2, 2, 2);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .add-item-button:hover {
+            background-color: #45a049;
+            border-color: #333;
+            outline: 2px solid black;
+        }
+        .generate {
+            font-size: 15px;
+        }
+        .generate:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>INVOICE</h1>
+        <form id="invoice" onsubmit="generateBill(event)">
+            <label for="custname">Name:</label>
+            <input type="text" id="custname" placeholder="Enter customer name" required>
+
+            <label for="custadd">Address:</label>
+            <input type="text" id="custadd" placeholder="Enter customer address" required>
+
+            <label for="custno">Mobile No:</label>
+            <input type="number" id="custno" placeholder="Enter customer mobile number" required>
+
+            <div id="itemsContainer">
+                <div class="item-container">
+                    <label for="itemname">Item:</label>
+                    <input type="text" class="itemname" placeholder="Enter item name" required>
+
+                    <label for="itemquantity">Quantity:</label>
+                    <input type="number" class="itemquantity" placeholder="Enter item quantity" required min="1">
+
+                    <label for="itemprice">Price:</label>
+                    <input type="number" class="itemprice" placeholder="Enter item price" required min="0.01" step="0.01">
+                </div>
+            </div>
+            <button type="button" class="add-item-button" onclick="addItem()">Add Another Item</button>
+            <br>
+            <button id="button" class="generate" type="submit">Generate Bill</button>
+        </form>
+    </div>
+
+    <script>
+        function addItem() {
+            const itemsContainer = document.getElementById('itemsContainer');
+            const itemContainer = document.createElement('div');
+            itemContainer.className = 'item-container';
+            itemContainer.innerHTML = `
+                <label for="itemname">Item:</label>
+                <input type="text" class="itemname" placeholder="Enter item name" required>
+                <label for="itemquantity">Quantity:</label>
+                <input type="number" class="itemquantity" placeholder="Enter item quantity" required min="1">
+                <label for="itemprice">Price:</label>
+                <input type="number" class="itemprice" placeholder="Enter item price" required min="0.01" step="0.01">
+            `;
+            itemsContainer.appendChild(itemContainer);
+        }
+
+        function generateBill(event) {
+            event.preventDefault();
+            const customerName = document.getElementById("custname").value;
+            const customerAddress = document.getElementById("custadd").value;
+            const itemNames = document.querySelectorAll(".itemname");
+            const itemQuantities = document.querySelectorAll(".itemquantity");
+            const itemPrices = document.querySelectorAll(".itemprice");
+
+            let items = [];
+            let itemsTotal = 0;
+
+            for (let i = 0; i < itemNames.length; i++) {
+                const itemName = itemNames[i].value;
+                const itemQuantity = parseInt(itemQuantities[i].value);
+                const itemPrice = parseFloat(itemPrices[i].value);
+                const itemTotal = itemQuantity * itemPrice;
+                itemsTotal += itemTotal;
+                items.push({ name: itemName, quantity: itemQuantity, price: itemPrice.toFixed(2), total: itemTotal.toFixed(2) });
+            }
+
+            const taxRate = 0.15;
+            const taxAmount = itemsTotal * taxRate;
+            const finalTotal = itemsTotal + taxAmount;
+            const invoiceNumber = 'INV' + Math.floor(Math.random() * 1000000);
+
+            localStorage.setItem("customerName", customerName);
+            localStorage.setItem("customerAddress", customerAddress);
+            localStorage.setItem("items", JSON.stringify(items));
+            localStorage.setItem("taxAmount", taxAmount.toFixed(2));
+            localStorage.setItem("itemsTotal", itemsTotal.toFixed(2));
+            localStorage.setItem("totalAmount", finalTotal.toFixed(2));
+            localStorage.setItem("invoiceNumber", invoiceNumber);
+
+            window.location.href = "billing.html";
+        }
+    </script>
+</body>
+</html>
